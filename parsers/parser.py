@@ -52,7 +52,7 @@ class ParseResult:
 
 
 class Parser:
-    def __int__(self, start_url: str = ""):
+    def __init__(self, start_url: str = ""):
         self.start_url = start_url
 
     def parse(self, news_num: int) -> ParseResult:
