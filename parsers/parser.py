@@ -33,6 +33,14 @@ class ParseResult:
     def __init__(self):
         self.entities: Dict[int, ParseEntity] = dict()
 
+    def __iadd__(self, other):
+        start_index = len(self.entities)
+        for entity in other.entities.values():
+            entity = deepcopy(entity)
+            entity.id += start_index
+            self.add_entity(entity)
+        return self
+
     def add_entity(self, entity: ParseEntity):
         self.entities[entity.id] = entity
 
