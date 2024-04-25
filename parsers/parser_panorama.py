@@ -38,12 +38,14 @@ class PanoramaParser(Parser):
         print(f"[PanoramaParser] Parse titles ...")
         news_data = []
         current_url = self.start_url
+        progress_bar = tqdm(total=news_num)
         while len(news_data) < news_num:
             selenium_driver.get(current_url)
             for news_block in selenium_driver.find_elements(By.CLASS_NAME, "flex.flex-col.rounded-md.mb-2"):
                 news_link = news_block.get_attribute('href')
                 news_title = news_block.text.split('\n')[-1]
                 news_data.append([news_title, news_link, self.current_date])
+                progress_bar.update(1)
             self.current_date -= timedelta(1)
             current_url = self.get_current_news_page_link()
         news_data = news_data[:news_num]
@@ -85,6 +87,7 @@ if __name__ == '__main__':
     news_step = news_num // len(categories)
     parse_data_list = []
     for i, category in enumerate(categories):
+        print(f'Parsing category: {category}')
         parser = PanoramaParser(category=category)
         parse_data = parser.parse(news_step if i < len(categories) - 1 else news_num)
         parse_data_list.append(parse_data)
