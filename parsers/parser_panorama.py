@@ -5,6 +5,7 @@ from enum import Enum
 
 from datetime import datetime, timedelta
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from tqdm import tqdm
 
@@ -56,8 +57,7 @@ class PanoramaParser(Parser):
             if (i % self.PAGES_NUM_BETWEEN_SLEEPS) == 0:
                 time.sleep(self.SLEEP_TIME_NEWS_PAGE)
             news_link = data[1]
-            selenium_driver.get(news_link)
-            news_text = self.__get_news_text(selenium_driver)
+            news_text = self.__get_news_text(news_link, selenium_driver)
             data.append(news_text)
 
         # Create ParseResult
@@ -70,8 +70,13 @@ class PanoramaParser(Parser):
         return parse_result
 
     @staticmethod
-    def __get_news_text(driver):
-        return driver.find_element(By.CLASS_NAME, "entry-contents.pr-0").text
+    def __get_news_text(link, driver):
+        try:
+            driver.get(link)
+            return driver.find_element(By.CLASS_NAME, "entry-contents.pr-0").text
+        except NoSuchElementException:
+            print(f"[PanoramaParser][WARNING] Can't find text {link}")
+            return ""
 
 
 if __name__ == '__main__':
