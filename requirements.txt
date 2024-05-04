@@ -1,2 +1,4 @@
+dateparser
 pandas
+selenium
 tqdm
