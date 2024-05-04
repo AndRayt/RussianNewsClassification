@@ -5,7 +5,6 @@ import time
 
 import dateparser
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
 from tqdm import tqdm
@@ -84,7 +83,7 @@ class IZParser(Parser):
     def __get_news_text(driver):
         try:
             news_body = driver.find_element(By.CLASS_NAME, "text-article__inside").text
-        except:
+        except NoSuchElementException:
             news_body = ''
         return news_body
 
