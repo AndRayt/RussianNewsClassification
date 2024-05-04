@@ -29,7 +29,7 @@ class RTParser(Parser):
         selenium_driver.maximize_window()
         selenium_driver.get(self.start_url)
 
-        # Closing telegram advertisment on site
+        # Closing telegram advertisement on site
         selenium_driver.find_element(By.CLASS_NAME, 'Popup-telegram__close').click()  # close start banner
         selenium_driver.find_element(By.LINK_TEXT, 'Подтвердить').click()
 
