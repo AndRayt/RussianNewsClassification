@@ -22,5 +22,16 @@ from <package> import <Class0>, ...
 
 Each subblock should be sorted by lexicographic order
 
+## Dataset
+List of souces:
+ * meduza.io
+ * tvrain.tv
+ * panorama.pub
+ * russian.rt.com
+ * iz.ru
+
+Download:
+https://drive.google.com/drive/folders/1w-4yc3XaF9WztGmH-mkb34JkJBTZ6m7H
+
 ## Authors
  Andrei Raitsyn (@AndRayt), Pavel Suvorkin (@SuvorkinPavel)
