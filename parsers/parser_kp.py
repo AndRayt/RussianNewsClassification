@@ -6,7 +6,7 @@ import time
 import dateparser
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException, TimeoutException
 from tqdm import tqdm
 
 from global_data import CHROMEDRIVER_BIN
@@ -15,7 +15,7 @@ from parsers.parser import Parser, ParseEntity, ParseResult
 
 class KPParser(Parser):
     NEWS_ON_PAGE_NUM = 15
-    SLEEP_TIME_MORE_BUTTON = 2  # seconds
+    SLEEP_TIME_MORE_BUTTON = 5  # seconds
     PAGES_NUM_BETWEEN_SLEEPS = 1
     SLEEP_TIME_NEWS_PAGE = 5  # seconds
 
@@ -27,6 +27,7 @@ class KPParser(Parser):
         selenium_driver = webdriver.Chrome(service=self.selenium_service)
         selenium_driver.maximize_window()
         selenium_driver.get(self.start_url)
+        selenium_driver.set_page_load_timeout(1000)
 
         # "More" button click
         more_button_click_num = math.ceil(news_num / float(self.NEWS_ON_PAGE_NUM))
@@ -34,8 +35,7 @@ class KPParser(Parser):
         try:
             for i in tqdm(range(more_button_click_num)):
                 time.sleep(self.SLEEP_TIME_MORE_BUTTON)
-                self.__move_to_bottom(selenium_driver)
-                more_button = selenium_driver.find_element(By.LINK_TEXT, 'Загрузить ещё')
+                more_button = selenium_driver.find_element(By.CLASS_NAME, 'sc-abxysl-0')
                 more_button.click()
         except (ElementClickInterceptedException, NoSuchElementException):
             print(f"[KPParser][Warning] Access to the button has been blocked ...")
@@ -56,12 +56,15 @@ class KPParser(Parser):
         for i, data in enumerate(tqdm(news_data)):
             if (i % self.PAGES_NUM_BETWEEN_SLEEPS) == 0:
                 time.sleep(self.SLEEP_TIME_NEWS_PAGE)
-            news_link = data[1]
-            selenium_driver.get(news_link)
-            news_date = self.__get_news_date(selenium_driver)
-            news_text = self.__get_news_text(selenium_driver)
-            data.append(news_text)
-            data.append(news_date)
+            try:
+                news_link = data[1]
+                selenium_driver.get(news_link)
+                news_date = self.__get_news_date(selenium_driver)
+                news_text = self.__get_news_text(selenium_driver)
+                data.append(news_text)
+                data.append(news_date)
+            except TimeoutException:
+                continue
 
         # Create ParseResult
         parse_result = ParseResult()
@@ -86,7 +89,7 @@ class KPParser(Parser):
     def __get_news_text(driver):
         try:
             news_body = driver.find_element(By.CLASS_NAME, "sc-14f2vgk-1").text
-        except:
+        except NoSuchElementException:
             news_body = ''
         return news_body
 
