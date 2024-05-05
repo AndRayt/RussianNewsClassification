@@ -23,7 +23,7 @@ from <package> import <Class0>, ...
 Each subblock should be sorted by lexicographic order
 
 ## Dataset
-List of souces:
+List of sources:
  * meduza.io
  * tvrain.tv
  * panorama.pub
